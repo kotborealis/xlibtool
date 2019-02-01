@@ -5,7 +5,7 @@
 * `raise` --- поднять окно наверх
 * `lower` --- опустить окно вниз
 
-* Usage: `xlibtool iconify|lower|raise title`
+* Usage: `xlibtool [--iconify] [--lower] [--raise] title`
 * Dependencies: `xlib`
 * Build: `make`
 
