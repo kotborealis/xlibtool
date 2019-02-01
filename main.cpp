@@ -41,13 +41,15 @@ int match_window_name(Display *display, Window window, const char *needle) {
   else if (actual_format == 0)
     nbytes = 0;
 
-  printf("* <%.*s>\n", nbytes * nitems, data);
-  // if (strcmp(data[0], needle) == 0) {
-  //   printf("FOUND!\n");
-  //   return 1;
-  // }
-  
-  return 0;
+  char *name = (char *)malloc(nbytes * nitems + 1);
+  sprintf(name, "%.*s", nbytes * nitems, data);
+  XFree(data);
+
+  int retval = strcmp(name, needle) == 0;
+
+  free(name);
+
+  return retval;
 }
 
 Window window_from_name_search(Display *display, Window current, char const *needle) {
@@ -55,21 +57,17 @@ Window window_from_name_search(Display *display, Window current, char const *nee
   unsigned children_count;
   char *name = NULL;
 
-  /* Check if this window has the name we seek */
-  if(match_window_name(display, current, needle)){
+  if(match_window_name(display, current, needle))
     return current;
-  }
 
   retval = 0;
 
-  /* If it does not: check all subwindows recursively. */
   if(0 != XQueryTree(display, current, &root, &parent, &children, &children_count)) {
     unsigned i;
     for(i = 0; i < children_count; ++i) {
       Window win = window_from_name_search(display, children[i], needle);
 
       if(win != 0) {
-        printf("Found!\n");
         retval = win;
         break;
       }
@@ -90,6 +88,13 @@ Window window_from_name(char const *name) {
 }
 
 int main(int argc, char** argv){
-  window_from_name("terminal");
+  if(argc < 2) 
+    return 0;
+
+  Window window = window_from_name(argv[1]);
+  if(window != 0)
+    printf("window id # 0x%lx\n", window);
+  else
+    printf("nothing\n");
   return 0;
 }
