@@ -95,7 +95,7 @@ Window window_from_name(Display *display, char const *name) {
 }
 
 void usage(char* cmd){
-  printf("Usage: %s iconify|lower|raise title\n", cmd);
+  printf("Usage: %s [--iconify] [--lower] [--raise] title\n", cmd);
 }
 
 int main(int argc, char** argv){
@@ -105,22 +105,30 @@ int main(int argc, char** argv){
   int iconify = 0;
   int raise = 0;
 
-  if(argc < 3){
+  char* title = NULL;
+
+  if(argc < 2){
     usage(argv[0]);
     return 1;
   }
   else{
-    lower = strcmp(argv[1], "lower") == 0;
-    iconify = strcmp(argv[1], "iconify") == 0;
-    raise = strcmp(argv[1], "raise") == 0;
-
-    if(!lower && !raise && !iconify){
-      usage(argv[0]);
-      return 1;
+    for(int i = 1; i < argc; i++){
+      if(argv[i][0] == '-' && argv[i][1] == '-'){
+        char *_ = argv[i] + 2;
+        iconify += strcmp(_, "iconify") == 0;
+        raise += strcmp(_, "raise") == 0;
+        lower += strcmp(_, "lower") == 0;
+      }
+      else{
+        title = argv[i];
+      }
     }
   }
 
-  const char* title = argv[2];
+  if(!title){
+    usage(argv[0]);
+    return 1;
+  }
 
   Display *display = XOpenDisplay(NULL);
 
@@ -131,16 +139,14 @@ int main(int argc, char** argv){
     retval = 1;
   }
   else{
+    printf("Window with title `%s` found with id # 0x%lx\n", title, window);
     if(lower){
-      printf("Lowering window # 0x%lx with title `%s`\n", window, title);
       XLowerWindow(display, window);
     }
     if(iconify){
-      printf("Iconifying window # 0x%lx with title `%s`\n", window, title);
       XIconifyWindow(display, window, 0);
     }
     if(raise){
-      printf("Raising window # 0x%lx with title `%s`\n", window, title);
       XRaiseWindow(display, window);
     }
   }
