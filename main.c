@@ -95,7 +95,15 @@ Window window_from_name(Display *display, char const *name) {
 }
 
 void usage(char* cmd){
-  printf("Usage: %s [--iconify] [--lower] [--raise] [--focus] title\n", cmd);
+  printf("Usage: %s [options] title\n", cmd);
+  printf("\n");
+  printf("Options:\n");
+  printf("\t--iconify\tIconify specified window\n");
+  printf("\t--raise\tRaise specified window to top\n");
+  printf("\t--lower\tLower specified window to top\n");
+  printf("\t--focus\tBring focus to specified window\n");
+  printf("\t--map\tMap specified window\n");
+  printf("\t--unmap\tUnmap specified window\n");
 }
 
 int main(int argc, char** argv){
@@ -105,6 +113,8 @@ int main(int argc, char** argv){
   int iconify = 0;
   int raise = 0;
   int focus = 0;
+  int map = 0;
+  int unmap = 0;
 
   char* title = NULL;
 
@@ -120,6 +130,8 @@ int main(int argc, char** argv){
         raise += strcmp(_, "raise") == 0;
         lower += strcmp(_, "lower") == 0;
         focus += strcmp(_, "focus") == 0;
+        map += strcmp(_, "map") == 0;
+        unmap += strcmp(_, "unmap") == 0;
       }
       else{
         title = argv[i];
@@ -142,6 +154,7 @@ int main(int argc, char** argv){
   }
   else{
     printf("Window with title `%s` found with id # 0x%lx\n", title, window);
+
     if(lower)
       XLowerWindow(display, window);
 
@@ -153,6 +166,12 @@ int main(int argc, char** argv){
 
     if(focus)
       XSetInputFocus(display, window, RevertToNone, CurrentTime);
+
+    if(map)
+      XMapWindow(display, window);
+
+    if(unmap)
+      XUnmapWindow(display, window);
   }
 
   XCloseDisplay(display);
