@@ -95,12 +95,13 @@ Window window_from_name(Display *display, char const *name) {
 }
 
 void usage(char* cmd){
-  printf("Usage: %s [iconify|raise] <title>\n", cmd);
+  printf("Usage: %s iconify|lower|raise title\n", cmd);
 }
 
 int main(int argc, char** argv){
   int retval = 0;
 
+  int lower = 0;
   int iconify = 0;
   int raise = 0;
 
@@ -109,10 +110,11 @@ int main(int argc, char** argv){
     return 1;
   }
   else{
+    lower = strcmp(argv[1], "lower") == 0;
     iconify = strcmp(argv[1], "iconify") == 0;
     raise = strcmp(argv[1], "raise") == 0;
 
-    if(!iconify && !raise){
+    if(!lower && !raise && !iconify){
       usage(argv[0]);
       return 1;
     }
@@ -129,14 +131,16 @@ int main(int argc, char** argv){
     retval = 1;
   }
   else{
+    if(lower){
+      printf("Lowering window # 0x%lx with title `%s`\n", window, title);
+      XLowerWindow(display, window);
+    }
     if(iconify){
-      printf("Minimizing window # 0x%lx with title `%s`\n", window, title);
-      // https://tronche.com/gui/x/xlib/ICC/client-to-window-manager/XIconifyWindow.html
+      printf("Iconifying window # 0x%lx with title `%s`\n", window, title);
       XIconifyWindow(display, window, 0);
     }
-    else if(raise){
+    if(raise){
       printf("Raising window # 0x%lx with title `%s`\n", window, title);
-      // https://tronche.com/gui/x/xlib/window/XRaiseWindow.html
       XRaiseWindow(display, window);
     }
   }
