@@ -10,6 +10,9 @@
 #include <X11/Xresource.h>
 #include <X11/Xutil.h>
 
+/**
+ * Проверка, совпадает ли имя окна с needle
+**/
 int match_window_name(Display *display, Window window, const char *needle) {
   Atom netWmName;
   Atom utf8;
@@ -52,16 +55,21 @@ int match_window_name(Display *display, Window window, const char *needle) {
   return retval;
 }
 
+/**
+ * Поиск окна по имени needle
+**/
 Window window_from_name_search(Display *display, Window current, char const *needle) {
   Window retval, root, parent, *children;
   unsigned children_count;
   char *name = NULL;
 
+  // если текущее окно подходит, выкидываем его
   if(match_window_name(display, current, needle))
     return current;
 
   retval = 0;
 
+  // если нет, рекурсивно перебираем его детей
   if(0 != XQueryTree(display, current, &root, &parent, &children, &children_count)) {
     unsigned i;
     for(i = 0; i < children_count; ++i) {
@@ -79,7 +87,9 @@ Window window_from_name_search(Display *display, Window current, char const *nee
   return retval;
 }
 
-// frontend function: open display connection, start searching from the root window.
+/**
+  * Поиск окна по имени, обёртка
+**/
 Window window_from_name(Display *display, char const *name) {
   return window_from_name_search(display, XDefaultRootWindow(display), name);
 }
@@ -108,8 +118,6 @@ int main(int argc, char** argv){
     }
   }
 
-  printf("!%s %s %s\n", argv[0], argv[1], argv[2]);
-
   const char* title = argv[2];
 
   Display *display = XOpenDisplay(NULL);
@@ -123,10 +131,12 @@ int main(int argc, char** argv){
   else{
     if(iconify){
       printf("Minimizing window # 0x%lx with title `%s`\n", window, title);
+      // https://tronche.com/gui/x/xlib/ICC/client-to-window-manager/XIconifyWindow.html
       XIconifyWindow(display, window, 0);
     }
     else if(raise){
       printf("Raising window # 0x%lx with title `%s`\n", window, title);
+      // https://tronche.com/gui/x/xlib/window/XRaiseWindow.html
       XRaiseWindow(display, window);
     }
   }
