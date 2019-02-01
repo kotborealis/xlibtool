@@ -95,7 +95,7 @@ Window window_from_name(Display *display, char const *name) {
 }
 
 void usage(char* cmd){
-  printf("Usage: %s [--iconify] [--lower] [--raise] title\n", cmd);
+  printf("Usage: %s [--iconify] [--lower] [--raise] [--focus] title\n", cmd);
 }
 
 int main(int argc, char** argv){
@@ -104,6 +104,7 @@ int main(int argc, char** argv){
   int lower = 0;
   int iconify = 0;
   int raise = 0;
+  int focus = 0;
 
   char* title = NULL;
 
@@ -118,6 +119,7 @@ int main(int argc, char** argv){
         iconify += strcmp(_, "iconify") == 0;
         raise += strcmp(_, "raise") == 0;
         lower += strcmp(_, "lower") == 0;
+        focus += strcmp(_, "focus") == 0;
       }
       else{
         title = argv[i];
@@ -140,15 +142,17 @@ int main(int argc, char** argv){
   }
   else{
     printf("Window with title `%s` found with id # 0x%lx\n", title, window);
-    if(lower){
+    if(lower)
       XLowerWindow(display, window);
-    }
-    if(iconify){
+
+    if(iconify)
       XIconifyWindow(display, window, 0);
-    }
-    if(raise){
+
+    if(raise)
       XRaiseWindow(display, window);
-    }
+
+    if(focus)
+      XSetInputFocus(display, window, RevertToNone, CurrentTime);
   }
 
   XCloseDisplay(display);

@@ -5,7 +5,7 @@
 * `raise` --- поднять окно наверх
 * `lower` --- опустить окно вниз
 
-* Usage: `xlibtool [--iconify] [--lower] [--raise] title`
+* Usage: `xlibtool [--iconify] [--lower] [--raise] [--focus] title`
 * Dependencies: `xlib`
 * Build: `make`
 
@@ -18,3 +18,4 @@ References:
 * https://tronche.com/gui/x/xlib/window/XLowerWindow.html
 * https://tronche.com/gui/x/xlib/window/
 * https://tronche.com/gui/x/xlib/window/stacking-order.html
+* https://tronche.com/gui/x/xlib/input/XSetInputFocus.html
