@@ -80,21 +80,58 @@ Window window_from_name_search(Display *display, Window current, char const *nee
 }
 
 // frontend function: open display connection, start searching from the root window.
-Window window_from_name(char const *name) {
-  Display *display = XOpenDisplay(NULL);
-  Window w = window_from_name_search(display, XDefaultRootWindow(display), name);
-  XCloseDisplay(display);
-  return w;
+Window window_from_name(Display *display, char const *name) {
+  return window_from_name_search(display, XDefaultRootWindow(display), name);
+}
+
+void usage(char* cmd){
+  printf("Usage: %s [iconify|raise] <title>\n", cmd);
 }
 
 int main(int argc, char** argv){
-  if(argc < 2) 
-    return 0;
+  int retval = 0;
 
-  Window window = window_from_name(argv[1]);
-  if(window != 0)
-    printf("window id # 0x%lx\n", window);
-  else
-    printf("nothing\n");
-  return 0;
+  int iconify = 0;
+  int raise = 0;
+
+  if(argc < 3){
+    usage(argv[0]);
+    return 1;
+  }
+  else{
+    iconify = strcmp(argv[1], "iconify") == 0;
+    raise = strcmp(argv[1], "raise") == 0;
+
+    if(!iconify && !raise){
+      usage(argv[0]);
+      return 1;
+    }
+  }
+
+  printf("!%s %s %s\n", argv[0], argv[1], argv[2]);
+
+  const char* title = argv[2];
+
+  Display *display = XOpenDisplay(NULL);
+
+  Window window = window_from_name(display, title);
+
+  if(window == 0){
+    printf("Window with title `%s` not found, halting\n", title);
+    retval = 1;
+  }
+  else{
+    if(iconify){
+      printf("Minimizing window # 0x%lx with title `%s`\n", window, title);
+      XIconifyWindow(display, window, 0);
+    }
+    else if(raise){
+      printf("Raising window # 0x%lx with title `%s`\n", window, title);
+      XRaiseWindow(display, window);
+    }
+  }
+
+  XCloseDisplay(display);
+
+  return retval;
 }
