@@ -1,13 +1,16 @@
 # xlibtool
 
-Ищет окно на рабочем столе и выполняет с ним операции:
-* `iconify` --- минимизировать окно
-* `raise` --- поднять окно наверх
-* `lower` --- опустить окно вниз
+```
+Usage: ./xlibtool [options] title
 
-* Usage: `xlibtool [--iconify] [--lower] [--raise] [--focus] title`
-* Dependencies: `xlib`
-* Build: `make`
+Options:
+        --iconify       Iconify specified window
+        --raise Raise specified window to top
+        --lower Lower specified window to top
+        --focus Bring focus to specified window
+        --map   Map specified window
+        --unmap Unmap specified window
+```
 
 References:
 
