@@ -185,8 +185,7 @@ int main(int argc, char** argv){
   }
   else{
     printf("Window with title `%s` found with id # 0x%lx\n", title, window);
-	
-	
+
 	if(is_hidden)
 		printf("is_hidden: %s\n", 
 			is_window_hidden(display, window) ? "True" : "False");
