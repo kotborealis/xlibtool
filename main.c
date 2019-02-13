@@ -11,6 +11,34 @@
 #include <X11/Xutil.h>
 
 /**
+ * Свёрну то ли окно? :thinking:
+**/
+int is_window_hidden(Display *display, Window window){
+	Atom netWmState;
+	Atom netWmStateHidden;
+	Atom actual_type;
+	int actual_format;
+	unsigned long nitems, bytes_after, nbytes;
+	Atom *atoms;
+	
+	netWmState = XInternAtom(display, "_NET_WM_STATE", True);
+	netWmStateHidden = XInternAtom(display, "_NET_WM_STATE_HIDDEN", True);
+	
+	XGetWindowProperty(display, window, netWmState,
+		0, 0x77777777,
+		False, AnyPropertyType,
+		&actual_type, &actual_format, &nitems, &bytes_after, (unsigned char**)&atoms);
+	
+	int retval = 0;
+	
+	for(int i = 0; i < nitems; ++i){
+		retval = retval || atoms[i] == netWmStateHidden;
+	}
+	
+	return retval;
+}
+
+/**
  * Проверка, совпадает ли имя окна с needle
 **/
 int match_window_name(Display *display, Window window, const char *needle) {
@@ -104,6 +132,7 @@ void usage(char* cmd){
   printf("\t--focus\tBring focus to specified window\n");
   printf("\t--map\tMap specified window\n");
   printf("\t--unmap\tUnmap specified window\n");
+  printf("\t--is_hidden\tIs widnow hidden? (minified?)\n");
 }
 
 int main(int argc, char** argv){
@@ -115,6 +144,7 @@ int main(int argc, char** argv){
   int focus = 0;
   int map = 0;
   int unmap = 0;
+  int is_hidden = 0;
 
   char* title = NULL;
 
@@ -132,6 +162,7 @@ int main(int argc, char** argv){
         focus += strcmp(_, "focus") == 0;
         map += strcmp(_, "map") == 0;
         unmap += strcmp(_, "unmap") == 0;
+        is_hidden += strcmp(_, "is_hidden") == 0;
       }
       else{
         title = argv[i];
@@ -154,6 +185,11 @@ int main(int argc, char** argv){
   }
   else{
     printf("Window with title `%s` found with id # 0x%lx\n", title, window);
+	
+	
+	if(is_hidden)
+		printf("is_hidden: %s\n", 
+			is_window_hidden(display, window) ? "True" : "False");
 
     if(lower)
       XLowerWindow(display, window);
