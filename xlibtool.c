@@ -40,9 +40,9 @@ int is_window_hidden(Display *display, Window window){
 }
 
 /**
- * Проверка, совпадает ли имя окна с needle
+ * Получить имя окна
 **/
-int match_window_name(Display *display, Window window, const char *needle) {
+char *get_window_name(Display *display, Window window){
   Atom netWmName;
   Atom utf8;
   Atom actual_type;
@@ -77,7 +77,16 @@ int match_window_name(Display *display, Window window, const char *needle) {
   sprintf(name, "%.*s", nbytes * nitems, data);
   XFree(data);
 
-  int retval = strcmp(name, needle) == 0;
+  return name;
+}
+
+/**
+ * Проверка, совпадает ли имя окна с needle
+**/
+int match_window_name(Display *display, Window window, const char *needle) {
+  char *name = get_window_name(display, window);
+  
+  int retval = strstr(name, needle) != NULL;
 
   free(name);
 

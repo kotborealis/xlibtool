@@ -67,11 +67,11 @@ int main(int argc, char** argv){
   Window window = window_from_name(display, title);
 
   if(window == 0){
-    printf("Window with title `%s` not found, halting\n", title);
+    printf("Window with title matching `%s` not found, halting\n", title);
     retval = 1;
   }
   else{
-    printf("Window with title `%s` found with id # 0x%lx\n", title, window);
+    printf("Window with title matching `%s` found with id # 0x%lx\n", title, window);
 
 	if(is_hidden)
 		printf("is_hidden: %s\n", 
