@@ -17,6 +17,7 @@ void usage(char* cmd){
   printf("\t--map\tMap specified window\n");
   printf("\t--unmap\tUnmap specified window\n");
   printf("\t--is_hidden\tIs widnow hidden? (minified?)\n");
+  printf("\t--toggle\tRaise window if hidden, iconify if not\n");
 }
 
 int main(int argc, char** argv){
@@ -29,6 +30,7 @@ int main(int argc, char** argv){
   int map = 0;
   int unmap = 0;
   int is_hidden = 0;
+  int toggle = 0;
 
   char* title = NULL;
 
@@ -47,6 +49,7 @@ int main(int argc, char** argv){
         map += strcmp(_, "map") == 0;
         unmap += strcmp(_, "unmap") == 0;
         is_hidden += strcmp(_, "is_hidden") == 0;
+        toggle += strcmp(_, "toggle") == 0;
       }
       else{
         title = argv[i];
@@ -73,6 +76,10 @@ int main(int argc, char** argv){
 	if(is_hidden)
 		printf("is_hidden: %s\n", 
 			is_window_hidden(display, window) ? "True" : "False");
+			
+	if(toggle)
+		printf("is_hidden: %s\n", 
+			!toggle_window(display, window) ? "True" : "False");
 
     if(lower)
       XLowerWindow(display, window);

@@ -122,3 +122,20 @@ Window window_from_name_search(Display *display, Window current, char const *nee
 Window window_from_name(Display *display, char const *name) {
   return window_from_name_search(display, XDefaultRootWindow(display), name);
 }
+
+/**
+  * Скрыть/раскрыть окно
+  * Возвращает состояние окна **после** вызова функции
+  * 0 --- скрыто
+  * 1 --- раскрыто
+**/
+int toggle_window(Display *display, Window window){
+	if(!is_window_hidden(display, window)){
+		XIconifyWindow(display, window, 0);
+		return 0;
+	}
+	else{
+		XMapWindow(display, window);
+		return 1;
+	}
+}
