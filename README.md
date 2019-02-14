@@ -10,6 +10,8 @@ Options:
         --focus Bring focus to specified window
         --map   Map specified window
         --unmap Unmap specified window
+		--is_hidden Is widnow hidden? (minified?)
+		--toggle Raise window if hidden, iconify if not
 ```
 
 References:
